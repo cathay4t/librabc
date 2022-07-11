@@ -1,0 +1,23 @@
+[package]
+name = "rabcc"
+version = "0.1.0"
+authors = ["Gris Ge <fge@redhat.com>"]
+description = "Demo CLI for linux system programing"
+license = "Apache-2.0"
+homepage = "https://example.com"
+documentation = "https://example.com"
+repository = "https://github.com/cathay4t/librabc"
+keywords = ["linux"]
+categories = ["command-line-utilities"]
+edition = "2021"
+
+[[bin]]
+name = "rabcc"
+path = "rabcc.rs"
+
+[dependencies]
+env_logger = "0.9.0"
+log = "0.4.17"
+rabc = { "version" = "0.1", path = "../lib" }
+tokio = { "version" = "1.19.2", features = ["rt", "net", "macros"] }
+
