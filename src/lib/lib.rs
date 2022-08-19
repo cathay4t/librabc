@@ -6,6 +6,7 @@ mod error;
 mod event;
 mod ipc;
 mod timer;
+mod unit_tests;
 
 pub use crate::client::RabcClient;
 pub use crate::error::{ErrorKind, RabcError};
