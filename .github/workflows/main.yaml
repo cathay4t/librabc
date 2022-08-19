@@ -1,0 +1,112 @@
+name: CI
+
+on:
+  pull_request:
+   types: [opened, synchronize, reopened]
+
+jobs:
+  rust_lint:
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - rust_version: "stable"
+          - rust_version: "nightly"
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Rust ${{ matrix.rust_version }}
+      uses: actions-rs/toolchain@v1
+      with:
+          toolchain: ${{ matrix.rust_version }}
+          override: true
+          components: rustfmt, clippy
+
+    - name: Check fmt
+      if: matrix.rust_version == 'stable'
+      run: cd rust && cargo fmt -- --check
+
+    - name: Check clippy
+      if: matrix.rust_version == 'nightly'
+      run: cd rust && cargo clippy -- -D warnings
+
+  rust_unit:
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - rust_version: "stable"
+          - rust_version: "nightly"
+          - rust_version: "beta"
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Rust ${{ matrix.rust_version }}
+      uses: actions-rs/toolchain@v1
+      with:
+          toolchain: ${{ matrix.rust_version }}
+          override: true
+
+    - name: Unit test
+      run: cargo test -- --show-output
+
+  py_lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: Install pylint
+        run: pylint --errors-only src/python
+
+  c_memory_leak_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install gcc make valgrind
+        run: sudo apt-get install -y gcc make valgrind
+      - name: Memory leak check
+        run: make check
+
+  integ:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - container_image: "quay.io/librabc/c8s-rabc-ci"
+          - container_image: "quay.io/librabc/c9s-rabc-ci"
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install gcc make valgrind
+        run: sudo apt-get install -y gcc make valgrind
+
+    - name: Install Rust stable
+      uses: actions-rs/toolchain@v1
+      with:
+          toolchain: stable
+          override: true
+
+      - name: Run tests
+        run: .github/run_test.sh ${{ matrix.container_image }}
+
+      - name: Set artifacts permissions
+        if: ${{ failure() }}
+        run: sudo chmod 777 test_artifacts/*
+
+      - uses: actions/upload-artifact@v3
+        if: ${{ failure() }}
+        with:
+          name: nmstate-test-artifact-${{ matrix.container_image }}
+          path: test_artifacts/
+          retention-days: 5
+

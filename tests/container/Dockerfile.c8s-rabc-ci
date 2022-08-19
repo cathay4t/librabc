@@ -1,0 +1,11 @@
+FROM quay.io/centos/centos:stream8
+
+RUN echo "2022-08-19" > /build_time
+
+RUN echo kernel.core_pattern=/test_artifacts/core.%h.%e.%t > \
+    /etc/sysctl.d/01-export-kernel-cores.conf
+
+RUN dnf -y install --setopt=install_weak_deps=False \
+        make rust-toolset gcc python3-pytest && \
+    ln -s /usr/bin/pytest-3 /usr/bin/pytest && \
+    dnf clean all
