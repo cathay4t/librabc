@@ -1,8 +1,14 @@
+# SPDX-License-Identifier: Apache-2.0
+
 import setuptools
+
+def get_version():
+    with open("../../VERSION") as fd:
+        return fd.read().strip()
 
 setuptools.setup(
     name="rabc",
-    version="0.1.0",
+    version=get_version(),
     author="Gris Ge",
     author_email="fge@redhat.com",
     description="Python binding of Rabc",

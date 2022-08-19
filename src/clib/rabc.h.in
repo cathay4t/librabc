@@ -10,9 +10,9 @@ extern "C" {
 
 #include <stdint.h>
 
-#define RABC_VERSION_MAJOR        0
-#define RABC_VERSION_MINOR        1
-#define RABC_VERSION_MICRO        0
+#define RABC_VERSION_MAJOR        @_VERSION_MAJOR@
+#define RABC_VERSION_MINOR        @_VERSION_MINOR@
+#define RABC_VERSION_MICRO        @_VERSION_MICRO@
 
 #define RABC_VERSION              \
     ((RABC_VERSION_MAJOR * 10000) + \
