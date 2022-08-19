@@ -27,11 +27,11 @@ jobs:
 
     - name: Check fmt
       if: matrix.rust_version == 'stable'
-      run: cd rust && cargo fmt -- --check
+      run: cargo fmt -- --check
 
     - name: Check clippy
       if: matrix.rust_version == 'nightly'
-      run: cd rust && cargo clippy -- -D warnings
+      run: cargo clippy -- -D warnings
 
   rust_unit:
     strategy:

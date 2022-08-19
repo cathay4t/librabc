@@ -2,7 +2,8 @@ FROM quay.io/centos/centos:stream9
 
 RUN echo "2022-08-19" > /build_time
 
-RUN dnf config-manager --set-enabled crb && \
+RUN dnf -y install dnf-plugins-core && \
+    dnf config-manager --set-enabled crb && \
     dnf -y install --setopt=install_weak_deps=False \
         make rust-toolset gcc python3-pytest && \
     dnf clean all
