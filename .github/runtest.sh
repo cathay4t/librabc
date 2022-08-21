@@ -7,6 +7,14 @@ TEST_ARTIFACTS_FOLDER="./test_artifacts/"
 CONTAINER_WORKSPACE="/workspace/rabc"
 CONTAINER_TEST_ARTIFACTS_FOLDER="/test_artifacts"
 
+if [ -n "$1" ];then
+    CONTAINER_IMAGE="quay.io/librabc/$1"
+else
+    if [ -z "$CONTAINER_IMAGE" ];then
+        CONTAINER_IMAGE="quay.io/librabc/c9s-rabc-ci"
+    fi
+fi
+
 CONTAINER_ID=""
 
 function cleanup {
@@ -23,7 +31,7 @@ mkdir $TEST_ARTIFACTS_FOLDER || true
 CONTAINER_ID=$(podman run -it -d \
     -v $PROJECT_PATH:$CONTAINER_WORKSPACE \
     -v $TEST_ARTIFACTS_FOLDER:$CONTAINER_TEST_ARTIFACTS_FOLDER \
-    $1 /bin/bash
+    $CONTAINER_IMAGE /bin/bash
 )
 
 podman exec -i $CONTAINER_ID \

@@ -89,8 +89,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - container_image: "quay.io/librabc/c8s-rabc-ci"
-          - container_image: "quay.io/librabc/c9s-rabc-ci"
+          - container_image: "c8s-rabc-ci"
+          - container_image: "c9s-rabc-ci"
     steps:
       - uses: actions/checkout@v3
 
