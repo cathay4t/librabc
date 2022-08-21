@@ -88,6 +88,7 @@ class RabcClient:
         )
         process_result(rc, c_log, c_err_kind, c_err_msg)
         if c_reply:
+            # pylint: disable=no-member
             reply = c_reply.value.decode("utf-8")
             lib.rabc_cstring_free(c_reply)
             return reply

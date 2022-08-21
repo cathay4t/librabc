@@ -17,6 +17,7 @@ const RABC_FAIL_NULL_POINTER: u32 = 2;
 
 static INSTANCE: OnceCell<MemoryLogger> = OnceCell::new();
 
+#[allow(clippy::not_unsafe_ptr_arg_deref)]
 #[no_mangle]
 pub extern "C" fn rabc_client_new(
     client: *mut *mut RabcClient,
@@ -73,6 +74,7 @@ pub extern "C" fn rabc_client_new(
     }
 }
 
+#[allow(clippy::not_unsafe_ptr_arg_deref)]
 #[no_mangle]
 pub extern "C" fn rabc_client_poll(
     client: *mut RabcClient,
@@ -151,6 +153,7 @@ pub extern "C" fn rabc_client_poll(
     }
 }
 
+#[allow(clippy::not_unsafe_ptr_arg_deref)]
 #[no_mangle]
 pub extern "C" fn rabc_client_process(
     client: *mut RabcClient,
@@ -228,6 +231,7 @@ pub extern "C" fn rabc_client_process(
     }
 }
 
+#[allow(clippy::not_unsafe_ptr_arg_deref)]
 #[no_mangle]
 pub extern "C" fn rabc_client_free(client: *mut RabcClient) {
     if !client.is_null() {
@@ -247,6 +251,7 @@ pub extern "C" fn rabc_cstring_free(cstring: *mut c_char) {
     }
 }
 
+#[allow(clippy::not_unsafe_ptr_arg_deref)]
 #[no_mangle]
 pub extern "C" fn rabc_events_free(events: *mut u64, event_count: u64) {
     unsafe {
