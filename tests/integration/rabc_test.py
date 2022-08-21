@@ -5,10 +5,13 @@ import os
 import signal
 import subprocess
 import sys
+import time
 
 import pytest
 
 from rabc import RabcClient
+
+DAEMON_MAX_WAIT_TIME = 50   # 5 seconds
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -19,6 +22,15 @@ def rabc_daemon():
         stderr=subprocess.PIPE,
         preexec_fn=os.setsid,
     )
+    i = 0
+    while i < DAEMON_MAX_WAIT_TIME:
+        i += 1
+        time.sleep(0.1)
+        try:
+            RabcClient()
+            break
+        except Exception:
+            continue
     yield
     os.killpg(daemon.pid, signal.SIGTERM)
 
