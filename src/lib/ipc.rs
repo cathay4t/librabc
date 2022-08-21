@@ -95,8 +95,8 @@ impl RabcConnection {
                 ),
             ));
         }
-        self.stream.write(&data.len().to_ne_bytes())?;
-        self.stream.write(data.as_bytes())?;
+        self.stream.write_all(&data.len().to_ne_bytes())?;
+        self.stream.write_all(data.as_bytes())?;
         Ok(())
     }
 }

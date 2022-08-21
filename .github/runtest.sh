@@ -3,24 +3,27 @@
 EXEC_PATH=$(dirname "$(realpath "$0")")
 PROJECT_PATH="$(dirname $EXEC_PATH)"
 
-TEST_ARTIFACT_FOLDER="test_artifacts/"
+TEST_ARTIFACTS_FOLDER="./test_artifacts/"
 CONTAINER_WORKSPACE="/workspace/rabc"
-CONTAINER_TEST_ARTIFACT_FOLDER="/test_artifacts"
+CONTAINER_TEST_ARTIFACTS_FOLDER="/test_artifacts"
 
 CONTAINER_ID=""
 
 function cleanup {
     if [ -n "$CONTAINER_ID" ];then
-        podman rm $CONTAINER_ID
+        podman rm -f $CONTAINER_ID || true
+        CONTAINER_ID=""
     fi
 }
 
-trap run_exit ERR EXIT
+trap cleanup ERR EXIT
 
-CONTAINER_ID=$(podman run -d \
+mkdir $TEST_ARTIFACTS_FOLDER || true
+
+CONTAINER_ID=$(podman run -it -d \
     -v $PROJECT_PATH:$CONTAINER_WORKSPACE \
-    -v $TEST_ARTIFACT_FOLDER:$CONTAINER_TEST_ARTIFACT_FOLDER \
-    $1
+    -v $TEST_ARTIFACTS_FOLDER:$CONTAINER_TEST_ARTIFACTS_FOLDER \
+    $1 /bin/bash
 )
 
 podman exec -i $CONTAINER_ID \
@@ -28,5 +31,5 @@ podman exec -i $CONTAINER_ID \
 
 podman exec -i $CONTAINER_ID \
     /bin/bash -c "cd $CONTAINER_WORKSPACE; \
-        env TEST_ARTIFACTS_FOLDER=$CONTAINER_TEST_ARTIFACT_FOLDER \
+        env TEST_ARTIFACTS_FOLDER=$CONTAINER_TEST_ARTIFACTS_FOLDER \
             tests/runtest.sh"

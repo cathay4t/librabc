@@ -80,8 +80,8 @@ clib_check: $(CLIB_SO_DEV_DEBUG) $(CLIB_HEADER) $(DAEMON_DEBUG)
 	ln -sfv $(CLIB_SO_FULL) $(TMPDIR)/$(CLIB_SO_MAN)
 	ln -sfv $(CLIB_SO_FULL) $(TMPDIR)/$(CLIB_SO_DEV)
 	cp $(CLIB_HEADER) $(TMPDIR)/$(shell basename $(CLIB_HEADER))
-	cc -g -Wall -Wextra -L$(TMPDIR) -I$(TMPDIR) -lrabc \
-		-o $(TMPDIR)/rabc_test src/clib/tests/rabc_test.c
+	cc -g -Wall -Wextra -L$(TMPDIR) -I$(TMPDIR) \
+		-o $(TMPDIR)/rabc_test src/clib/tests/rabc_test.c -lrabc
 	$(DAEMON_DEBUG) &
 	LD_LIBRARY_PATH=$(TMPDIR) \
 		valgrind --trace-children=yes --leak-check=full \

@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Install Rust ${{ matrix.rust_version }}
       uses: actions-rs/toolchain@v1
@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Install Rust ${{ matrix.rust_version }}
       uses: actions-rs/toolchain@v1
@@ -65,16 +65,23 @@ jobs:
         with:
           python-version: 3.x
       - name: Install pylint
-        run: pylint --errors-only src/python
+        run: pip3 install pylint pytest
+      - name: Run test
+        run: pylint --errors-only src/python/rabc/ tests/integration/
 
   c_memory_leak_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Install Rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: stable
+            override: true
       - name: Install gcc make valgrind
         run: sudo apt-get install -y gcc make valgrind
-      - name: Memory leak check
-        run: make check
+      - name: Run test
+        run: make clib_check
 
   integ:
     runs-on: ubuntu-latest
@@ -90,18 +97,18 @@ jobs:
       - name: Install gcc make valgrind
         run: sudo apt-get install -y gcc make valgrind
 
-    - name: Install Rust stable
-      uses: actions-rs/toolchain@v1
-      with:
-          toolchain: stable
-          override: true
+      - name: Install Rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: stable
+            override: true
 
       - name: Run tests
-        run: .github/run_test.sh ${{ matrix.container_image }}
+        run: .github/runtest.sh ${{ matrix.container_image }}
 
       - name: Set artifacts permissions
         if: ${{ failure() }}
-        run: sudo chmod 777 test_artifacts/*
+        run: sudo chmod 777 -Rv test_artifacts
 
       - uses: actions/upload-artifact@v3
         if: ${{ failure() }}
