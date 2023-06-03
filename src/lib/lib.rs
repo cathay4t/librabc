@@ -12,3 +12,8 @@ pub use crate::client::RabcClient;
 pub use crate::error::{ErrorKind, RabcError};
 pub use crate::event::RabcEvent;
 pub use crate::ipc::{RabcConnection, SOCKET_PATH};
+
+#[cfg(feature = "async")]
+mod client_async;
+#[cfg(feature = "async")]
+pub use crate::client_async::RabcClientAsync;

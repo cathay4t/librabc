@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
-use std::os::unix::io::AsRawFd;
+use std::os::unix::io::{AsRawFd, RawFd};
 
 use crate::{
     epoll::RabcEpoll, timer::RabcTimer, RabcConnection, RabcError, RabcEvent,
@@ -13,6 +13,12 @@ pub struct RabcClient {
     timer: RabcTimer,
     conn: RabcConnection,
     epoll: RabcEpoll,
+}
+
+impl AsRawFd for RabcClient {
+    fn as_raw_fd(&self) -> RawFd {
+        self.epoll.fd
+    }
 }
 
 impl RabcClient {

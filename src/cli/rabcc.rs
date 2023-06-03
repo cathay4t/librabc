@@ -1,20 +1,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
-use rabc::RabcClient;
+use futures::stream::StreamExt;
+use rabc::RabcClientAsync;
 
-const WAIT_TIME: u32 = 10;
-
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+#[tokio::main()]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     init_logger();
-    let mut client = RabcClient::new()?;
-    for _ in 0..10 {
-        let events = client.poll(WAIT_TIME)?;
-        println!("Got events {:?}", events);
-        for event in events {
-            log::debug!("Got event {}", event);
-            if let Some(reply) = client.process(&event)? {
-                println!("Got reply from daemon {:?}", reply);
-            }
+    let mut client = RabcClientAsync::new()?;
+    for i in 0..10 {
+        if let Some(reply) = client.next().await {
+            log::info!("{i}: Got reply from daemon: {}", reply?);
         }
     }
     Ok(())
