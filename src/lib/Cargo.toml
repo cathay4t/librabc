@@ -18,7 +18,20 @@ path = "lib.rs"
 log = "0.4.17"
 tokio = { version = "1.19.2", features = ["net"] }
 
+[dependencies.futures]
+version = "0.3"
+optional = true
+
+[dependencies.libc]
+version = "0.2"
+optional = true
+
 [dependencies.nix]
-version = "0.24.1"
+version = "0.26"
+optional = true
 default-features = false
-features = ["time", "event"]
+features = ["poll", "time", "event"]
+
+[features]
+default = []
+async = ["futures", "libc", "nix"]
